@@ -1,0 +1,33 @@
+ diferença entre GLib.timeout_add e GLib.idle_add está no momento em que eles executam a função registrada dentro do loop de eventos do GLib.
+
+1. GLib.timeout_add(priority, interval, callback)
+Executa a função callback periodicamente após um intervalo de tempo (interval) especificado (em milissegundos com timeout_add() ou em segundos com timeout_add_seconds()).
+O callback continua sendo chamado repetidamente até que retorne GLib.SOURCE_REMOVE, ou até ser explicitamente removido.
+Útil para executar tarefas em intervalos regulares.
+Exemplo:
+
+javascript
+Copiar
+Editar
+GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+    log('Executado a cada 1 segundo');
+    return GLib.SOURCE_CONTINUE; // Continua executando
+});
+2. GLib.idle_add(priority, callback)
+Executa a função callback assim que o loop de eventos estiver ocioso, ou seja, quando não houver tarefas de maior prioridade pendentes.
+O callback é executado apenas uma vez, a menos que ele retorne GLib.SOURCE_CONTINUE, o que faz com que ele seja chamado repetidamente quando o loop estiver ocioso.
+Útil para adiar a execução de código até que o sistema tenha tempo livre.
+Exemplo:
+
+javascript
+Copiar
+Editar
+GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+    log('Executado quando o loop de eventos estiver ocioso');
+    return GLib.SOURCE_REMOVE; // Executa apenas uma vez
+});
+Resumo das diferenças
+Característica	GLib.timeout_add	GLib.idle_add
+Quando executa	Após um intervalo de tempo	Quando o loop de eventos está ocioso
+Repetição	Sim, até ser removido	Não, a menos que retorne GLib.SOURCE_CONTINUE
+Uso típico	Execução periódica (exemplo: atualização de UI)	Execução atrasada sem bloquear UI
