@@ -78,40 +78,40 @@ fi
 
 
 # Add to PATH
-if grep -q "export PATH=\"$INSTALL_DIR/bin:\$PATH\"" "$HOME/.bashrc" || grep -q "export PATH=\"$INSTALL_DIR/bin:\$PATH\"" "$HOME/.zshrc" || grep -q "export PATH=\"$INSTALL_DIR/bin:\$PATH\"" "$HOME/.profile"; then
+if grep -q "export PATH=\"$INSTALL_DIR/bin:\$PATH\"" "$HOME/.zshrc"; then
   echo "PATH already configured."
 else
-  echo "Adding $INSTALL_DIR/bin to PATH in ~/.zshrc"
 
-  if [ -f "$HOME/.zshrc" ]; then
-    echo "export PATH=\"$INSTALL_DIR/bin:\$PATH\"" >> "$HOME/.zshrc"
-    CONFIG_FILE="$HOME/.zshrc"
+  if ! [ -f "$HOME/.zshrc" ]; then
+    echo "creating $HOME/.zshrc file"
+    echo "adding $INSTALL_DIR/bin to PATH in ~/.zshrc"
+    echo "export PATH=\"$INSTALL_DIR/bin:\$PATH\"" > "$HOME/.zshrc"
   else
-    echo "Warning: No .bashrc, .zshrc, or .profile file found. You'll need to manually add $INSTALL_DIR/bin to your PATH."
+    echo "warning: .zshrc file found. You'll need to manually add $INSTALL_DIR/bin to your PATH."
   fi
 fi
 
 # Clean up
-echo "Cleaning up..."
+echo "cleaning up..."
 cd ..
 rm -rf "$STOW_DIR"
 rm "$STOW_FILE"
 
 # Source the configuration file to update the PATH
 if [ -n "$CONFIG_FILE" ]; then
-  echo "Sourcing $CONFIG_FILE to update PATH..."
+  echo "sourcing $CONFIG_FILE to update PATH..."
   source "$CONFIG_FILE"
 fi
 
-echo "Stow installed locally to $INSTALL_DIR"
-echo "Make sure to restart your terminal or run 'source ~/.bashrc' (or similar) to use Stow."
+echo "stow installed locally to $INSTALL_DIR/bin"
+echo "make sure to restart your terminal or run 'source ~/.zshrc' (or similar) to use Stow."
 
 # Verification
-echo "Verifying installation..."
+echo "verifying installation..."
 if stow --version &> /dev/null; then
-  echo "Stow installation verified successfully."
+  echo "stow installation verified successfully."
 else
-  echo "Error: Stow installation verification failed.  Check your PATH."
+  echo "error: Stow installation verification failed.  Check your PATH."
 fi
 
 exit 0
